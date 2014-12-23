@@ -10,6 +10,13 @@
       <jettyVersion>7.0.2.v20100331</jettyVersion>
    </properties>
 
+		<pluginRepositories>
+        <pluginRepository>
+            <id>onejar-maven-plugin.googlecode.com</id>
+            <url>http://onejar-maven-plugin.googlecode.com/svn/mavenrepo</url>
+        </pluginRepository>
+    </pluginRepositories>
+
    <dependencies>
       <dependency>
          <groupId>org.eclipse.jetty</groupId>
