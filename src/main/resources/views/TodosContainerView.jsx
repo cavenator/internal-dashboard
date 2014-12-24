@@ -9,25 +9,59 @@ define(["jquery", "underscore","react", "jsx!views/CommentList","lib/bootstrap/j
       }
    });
 
-		var TodosList = React.createClass({
-			defaultProps: {
-				data: []
-			},
-			createTodosFrom: function(data){
-				return (
-						<div>
-							<span>Title</span><span>{data.title}</span><br />
-							<span>Description</span><span>{data.description}</span>
-						</div>
-					);
+		var Todo = React.createClass({
+			getDefaultProps: function(){
+				return {
+					readonly: true,
+					todo: {}
+				};
 			},
 			render: function(){
-				var mappedChildren = _.map(this.props.data, function(data){ return this.createTodosFrom(data) }, this);
+				var floatRight = {
+					float: 'right'
+				}, title, description;
+				if (this.props.readonly){
+					title = this.props.todo.title;
+					description = this.props.todo.description;
+				} else {
+					title = <input id="todoTitle" />;
+					description = <input id="todoDescription" />;
+				}
 				return (
 					<div className="row-fluid">
-						<div className="span2" />
+						<div className="span3" />
+						<div className="span6">
+							<div className="row-fluid">
+								<div className="span4"><span style={floatRight}>Title:</span></div>
+								<div className="span8">{title}</div>
+							</div>
+							<div className="row-fluid">
+								<div className="span4"><span style={floatRight}>Description:</span></div>
+								<div className="span8">{description}</div>
+							</div>
+						</div>
+						<div className="span3" />
+					</div>
+				);
+			}
+		});
+
+		var TodosList = React.createClass({
+			getDefaultProps: function(){
+				return {
+					data: [{title: "Okay", description: "What is going on?"}]
+				};
+			},
+			createTodosFrom: function(data){
+				return <Todo todo={data} />
+ 			},
+			render: function(){
+				var self = this, mappedChildren = _.map(this.props.data, function(data){
+					return self.createTodosFrom(data);
+				});
+				return (
+					<div id="todosList">
 						{mappedChildren}
-						<div className="span2" />
 					</div>
 				);
 			}
@@ -41,7 +75,7 @@ define(["jquery", "underscore","react", "jsx!views/CommentList","lib/bootstrap/j
 				return (
 					<div className="row-fluid">
 						<div className="span3" />
-						<div className="span3"><Button label="Add" className="btn btn-primary" style={floatRight} /></div>
+						<div className="span3"><Button label="Add" className="btn btn-primary" style={floatRight} onClick={this.props.onAdd} /></div>
 						<div className="span3"><Button label="Clear all" className="btn" /></div>
 						<div className="span3" />
 					</div>
@@ -50,10 +84,23 @@ define(["jquery", "underscore","react", "jsx!views/CommentList","lib/bootstrap/j
 		});
 
     var TodosContainerView = React.createClass({
+			getInitialState: function(){
+				return {
+					createNew: false
+				};
+			},
+			onAdd: function(){
+				this.setState({createNew: true});
+			},
        render: function(){
+					 var todo;
+						if (this.state.createNew){
+							todo = <Todo readonly={false} />
+						}
            return (
 										<div>
-											<TodosButtonList />
+											<TodosButtonList onAdd={this.onAdd} />
+											{todo}
 											<TodosList url="/todo" />
 										</div>
 					);
