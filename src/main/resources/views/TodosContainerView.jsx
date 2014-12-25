@@ -95,25 +95,6 @@ define(["jquery", "underscore","react","models/TodoCollection", "models/Todo","l
 			}
 		});
 
-		var TodosList = React.createClass({
-			createTodosFrom: function(data){
-				return <Todo todo={new TodoModel(data)} onDelete={this.props.onDelete} />
- 			},
-			clearAll: function(){
-				this.getDOMNode().innerHTML="";
-			},
-			render: function(){
-				var self = this, mappedChildren = _.map(this.props.todos, function(data){
-					return self.createTodosFrom(data);
-				});
-				return (
-					<div id="todosList">
-						{mappedChildren}
-					</div>
-				);
-			}
-		});
-
 		var TodosButtonList = React.createClass({
 			render: function(){
 				var floatRight = {
@@ -153,8 +134,13 @@ define(["jquery", "underscore","react","models/TodoCollection", "models/Todo","l
 			clearAll: function(){
 				var self = this;
 				todoCollection.removeAll().done(function(){
-					self.refs.todosList.clearAll();
-					self.onCancel();
+					self.setState({createNew: false, data: [] });
+				});
+			},
+			createReadonlyTodos: function(){
+				var self = this;
+				return _.map(this.state.data, function(todo){
+					return <Todo todo={new TodoModel(todo)} onDelete={self.onDelete} />
 				});
 			},
 			componentDidMount: function(){
@@ -166,7 +152,7 @@ define(["jquery", "underscore","react","models/TodoCollection", "models/Todo","l
        render: function(){
 					 var todo, down4EM={
 							margin: "0 0 4em 0"
-						};
+						}, mappedChildren = this.createReadonlyTodos();
 						if (this.state.createNew){
 							todo = <NewTodo style={down4EM} onCancel={this.onCancel} onSuccess={this.onSuccess} />
 						}
@@ -174,7 +160,9 @@ define(["jquery", "underscore","react","models/TodoCollection", "models/Todo","l
 						<div>
 							<TodosButtonList style={down4EM} submitLabel="Add" cancelLabel="Clear all" onSubmit={this.onAdd} onCancel={this.clearAll} />
 							{todo}
-							<TodosList todos={this.state.data} ref="todosList" onDelete={this.onDelete} />
+							<div id="todosList">
+								{mappedChildren}
+							</div>
 						</div>
 					);
        }
