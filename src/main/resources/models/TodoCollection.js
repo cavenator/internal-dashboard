@@ -4,7 +4,7 @@ define(['jquery','underscore','backbone','models/Todo'], function($,_,Backbone,T
       url:  "/todo",
       removeAll: function(){
          var self = this;
-         $.ajax({
+         return $.ajax({
             url: self.url,
             type: "DELETE"
          });

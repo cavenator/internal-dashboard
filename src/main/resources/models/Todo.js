@@ -6,6 +6,14 @@ define(['backbone'], function(Backbone){
        },
        urlRoot: function(){
          return "/todo";
-       }
+       },
+			 validate: function(attrs){
+				 var isBlank = function(value){
+						return value === null || value === undefined || value === "";
+					};
+					if (isBlank(attrs.title) || isBlank(attrs.description)){
+						return "title and description cannot be empty";
+					}
+			 }
    });
 });
