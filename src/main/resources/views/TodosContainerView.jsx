@@ -16,7 +16,10 @@ define(["jquery", "underscore","react","models/TodoCollection", "models/Todo","l
 				};
 			},
 			onSave: function(){
-				this.props.onSubmit(this.state.todo);
+				var callback = this.props.onSuccess;
+				this.state.todo.save().done(function(data){
+					callback(data);
+				});
 			},
 			fillInTitle: function(e){
 				var todo = this.state.todo;
@@ -61,9 +64,9 @@ define(["jquery", "underscore","react","models/TodoCollection", "models/Todo","l
 				};
 			},
 			deleteTodo: function(){
-				var self = this;
+				var self = this, id = this.props.todo.get("id");
 				this.props.todo.destroy().done(function(){
-					$(self.getDOMNode()).remove();
+					self.props.onDelete(id);
 				});
 			},
 			render: function(){
@@ -94,7 +97,7 @@ define(["jquery", "underscore","react","models/TodoCollection", "models/Todo","l
 
 		var TodosList = React.createClass({
 			createTodosFrom: function(data){
-				return <Todo todo={new TodoModel(data)} />
+				return <Todo todo={new TodoModel(data)} onDelete={this.props.onDelete} />
  			},
 			clearAll: function(){
 				this.getDOMNode().innerHTML="";
@@ -140,13 +143,12 @@ define(["jquery", "underscore","react","models/TodoCollection", "models/Todo","l
 			onCancel: function(){
 				this.setState({createNew: false});
 			},
-			onSave: function(todo){
-				var self = this;
-				todo.save().done(function(data){
-					var todoList = self.state.data;
-					todoList.push(data);
-					self.setState({createNew: false, data: todoList });
-				});
+			onDelete: function(id){
+				this.setState({data: _.filter(this.state.data, function(todo){ return todo.id != id})});
+			},
+			onSuccess: function(todo){
+				this.state.data.push(todo);
+				this.setState({createNew: false });
 			},
 			clearAll: function(){
 				var self = this;
@@ -166,13 +168,13 @@ define(["jquery", "underscore","react","models/TodoCollection", "models/Todo","l
 							margin: "0 0 4em 0"
 						};
 						if (this.state.createNew){
-							todo = <NewTodo style={down4EM} onCancel={this.onCancel} onSubmit={this.onSave} />
+							todo = <NewTodo style={down4EM} onCancel={this.onCancel} onSuccess={this.onSuccess} />
 						}
            return (
 						<div>
 							<TodosButtonList style={down4EM} submitLabel="Add" cancelLabel="Clear all" onSubmit={this.onAdd} onCancel={this.clearAll} />
 							{todo}
-							<TodosList todos={this.state.data} ref="todosList" />
+							<TodosList todos={this.state.data} ref="todosList" onDelete={this.onDelete} />
 						</div>
 					);
        }
