@@ -1,10 +1,10 @@
 require.config({
    paths: {
      "jquery"      : "https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min",
+     "bootstrap"   : "lib/bootstrap/js/bootstrap",
      "underscore"  : "lib/underscore",
-     "backbone"    : "lib/backbone",
-     "react"       : "lib/react-with-addons",
-     "JSXTransformer": "lib/JSXTransformer",
+     "react"       : "lib/react/react",
+     "JSXTransformer": "lib/react/JSXTransformer",
      "text"        : "lib/plugins/text",
      "jsx"        : "lib/plugins/jsx"
    },
@@ -13,7 +13,7 @@ require.config({
     }
 });
 
-require(['jquery','underscore', 'routers/router','jsx'], function($, _, Router){
-   new Router()
-   Backbone.history.start({pushState:true});
+require(['jquery','underscore', 'react','jsx!components/SampleDiv', 'jsx'], function($, _, React, Div){
+
+    React.render(React.createElement(Div),document.getElementById("mainContent"));
 });
