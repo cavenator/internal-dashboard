@@ -3,7 +3,7 @@ define(["react"],function(React){
         render: function() {
             return (
                 <div className="commentBox">
-                    Hello, world! I am located in the components folder under resources :-)
+                    Hello, you! I am located in the components folder under resources :-)
                 </div>
             );
         }

@@ -1,15 +1,6 @@
-import org.httpobjects.HttpObject
-import org.httpobjects.Request
-import org.httpobjects.Response
 import org.httpobjects.jetty.HttpObjectsJettyHandler
 import org.httpobjects.util.ClasspathResourceObject
 import org.httpobjects.util.ClasspathResourcesObject
-
-import java.io.File
-import java.io.FileInputStream
-import java.io.InputStream
-import java.util.HashMap
-import java.util.Map
 
 object Main extends App {
 
